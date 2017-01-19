@@ -13,14 +13,11 @@ import java.nio.file.Path;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by Acer on 24.10.2016.
+ * Created by mrybalkin on 24.10.2016.
  */
 public class Main {
     private static final Object syncReader = new Object();    // object for synchronization
     private static final Object syncWriter = new Object();    // object for synchronization
-    private static Path oldFile;                      // path file for load
-    private static String nameNewFile;                      // name file for saved result file's load
-    ParagraphBuffer<Paragraph> bufferReader;
     static PropertiesHolder propertiesHolder = new PropertiesHolder();
     public static final Logger logger = Logger.getLogger(Main.class);
 
@@ -28,11 +25,11 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         int workerThreadsNumber = propertiesHolder.getWorkerThreadsNumber();
-        int paragraphsNumberInBuffer = propertiesHolder.getParagraphsNumberInBuffer();
-        oldFile = FileUtil.getFileToRead();
+        int paragraphNumberInBuffer = propertiesHolder.getParagraphsNumberInBuffer();
+        Path oldFile = FileUtil.getFileToRead();
 
         // Created reader's and writer's buffers
-        ParagraphBufferReader<Paragraph> readerBuffer = new ParagraphBufferReader<>(new LinkedBlockingQueue<Paragraph>(workerThreadsNumber));
+        ParagraphBufferReader<Paragraph> readerBuffer = new ParagraphBufferReader<>(new LinkedBlockingQueue<Paragraph>(paragraphNumberInBuffer));
         ParagraphBuffer<Paragraph> writerBuffer = new ParagraphBuffer<>(new LinkedBlockingQueue<Paragraph>());
         logger.info("Created reader and writer buffers");
 
