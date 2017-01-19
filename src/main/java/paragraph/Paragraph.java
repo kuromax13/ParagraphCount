@@ -1,12 +1,13 @@
 package paragraph;
 
 /**
- * Created by Acer on 11.01.2017.
+ * Created by mrybalkin on 11.01.2017.
+ *
+ * Class to describe paragraph to read from file
  */
 public class Paragraph {
-
-    protected final int numberParagraph;
-    protected String paragraph;
+    private final int numberParagraph;
+    private String paragraph;
 
     public Paragraph(int numberParagraph, String paragraph) {
         this.numberParagraph = numberParagraph;

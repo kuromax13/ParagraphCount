@@ -1,11 +1,9 @@
-import paragraph.Paragraph;
-import paragraph.ParagraphBuffer;
-import paragraph.ParagraphBufferReader;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.apache.log4j.Logger;
-import util.PropertiesHolder;
-
+import paragraph.Paragraph;
+import paragraph.ParagraphBuffer;
+import paragraph.ParagraphBufferReader;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -23,9 +21,7 @@ import java.util.List;
  * fingerprint (hash, SHA-1)
  */
 public class ParagraphProcessing implements Runnable {
-    PropertiesHolder propertiesHolder = new PropertiesHolder();
     final String SYMBOLS_PUNCTUATION = ".,:;!?()[]{}<>/|@#$%^&*-+=_~`\"";
-    final char SPACE = ' ';
     final Object syncReader;
     final Object syncWriter;
     ParagraphBufferReader<Paragraph> bufferReader;
@@ -46,8 +42,8 @@ public class ParagraphProcessing implements Runnable {
     public void run() {
         logger.info(" Started new thread Worker");
 
-        while (!bufferReader.isEndOfFile() || !bufferReader.dataQueue.isEmpty()) {
-            if (bufferReader.dataQueue.isEmpty()) {
+        while (!bufferReader.isEndOfFile() || !bufferReader.getDataQueue().isEmpty()) {
+            if (bufferReader.getDataQueue().isEmpty()) {
 
                 synchronized (syncReader){
                     syncReader.notifyAll();
@@ -62,10 +58,10 @@ public class ParagraphProcessing implements Runnable {
             else {
                 // take paragraph for work
                 synchronized (syncReader) {
-                    if (bufferReader.dataQueue.isEmpty()){
+                    if (bufferReader.getDataQueue().isEmpty()){
                         break;
                     }else {
-                        paragraph = bufferReader.dataQueue.remove();
+                        paragraph = bufferReader.getDataQueue().remove();
                     }
                 }
 
@@ -94,7 +90,7 @@ public class ParagraphProcessing implements Runnable {
 
     public synchronized void addParagraphIntoWriterBuffer() {
 
-        bufferWriter.dataQueue.add(paragraph);
+        bufferWriter.getDataQueue().add(paragraph);
 
         bufferWriter.setParagraphText(workerBuffer.getParagraphText());
         bufferWriter.setParagraphLength(workerBuffer.getParagraphLength());

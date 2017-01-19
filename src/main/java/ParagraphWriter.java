@@ -40,8 +40,8 @@ public class ParagraphWriter implements Runnable {
         File newFile = new File(newFile1.toAbsolutePath().toString());
         try(FileWriter writer = new FileWriter(newFile)){
 
-            while (!buffer.dataQueue.isEmpty() || !buffer.isEndOfFile()) { //check if buffer not empty
-                if (buffer.dataQueue.isEmpty()) {
+            while (!buffer.getDataQueue().isEmpty() || !buffer.isEndOfFile()) { //check if buffer not empty
+                if (buffer.getDataQueue().isEmpty()) {
 
                     synchronized (syncWriter) {
                         try {
@@ -53,8 +53,8 @@ public class ParagraphWriter implements Runnable {
                 }else{
                     //add read paragraphs to the list
                     int counter = 0;
-                    while (!buffer.dataQueue.isEmpty() && counter < 2){
-                        writerBuffer.add((Paragraph) buffer.dataQueue.remove());
+                    while (!buffer.getDataQueue().isEmpty() && counter < 2){
+                        writerBuffer.add((Paragraph) buffer.getDataQueue().remove());
                         counter++;
                     }
 

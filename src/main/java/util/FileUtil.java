@@ -1,6 +1,5 @@
 package util;
 
-import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
@@ -9,28 +8,16 @@ import java.nio.file.Path;
  */
 public class FileUtil {
     static PropertiesHolder propertiesHolder = new PropertiesHolder();
-    private static FileUtil fileToWrite;
-    private File newFile;
-    static String nameFile = propertiesHolder.getFileToReadName();
-
-//    public FileUtil(PropertiesHolder propertiesHolder) {
-//        this.propertiesHolder = propertiesHolder;
-//    }
 
     public static Path getFileToRead(){
-        return FileSystems.getDefault().getPath(getResourceFolder(), nameFile);
+        return FileSystems.getDefault().getPath(getResourceFolder(), propertiesHolder.getFileToReadName());
     }
 
     public static Path getFileToWrite() {
-        return FileSystems.getDefault().getPath(getResourceFolder(), getNewFileName());
+        return FileSystems.getDefault().getPath(getResourceFolder(), propertiesHolder.getFileToWriteName());
     }
 
-    public static String getNewFileName() {
-//        newFile = new File(propertiesHolder.getFileToWriteName());
-        return propertiesHolder.getFileToWriteName();
-    }
-
-    public static String getResourceFolder(){
+    private static String getResourceFolder(){
         return System.getProperty("user.dir") + "/src/main/resources";
     }
 }

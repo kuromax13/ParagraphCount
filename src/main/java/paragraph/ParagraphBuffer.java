@@ -3,14 +3,11 @@ package paragraph;
 import java.util.Queue;
 
 /**
- * Created by Acer on 11.01.2017.
- * length,
- * words count,
- * average words length,
- * dots
- * commas
- * fingerprint (hash, SHA-1)
+ * Created by mrybalkin on 11.01.2017.
+ *
+ * Class to describe paragraph to write into file after proccessing
  */
+
 public class ParagraphBuffer<T> extends ParagraphBufferReader {
     private String paragraphText;
     private String paragraphHash;

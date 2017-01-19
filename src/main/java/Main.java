@@ -19,40 +19,24 @@ public class Main {
     private static String nameNewFile;                      // name file for saved result file's load
     ParagraphBuffer<Paragraph> bufferReader;
     static PropertiesHolder propertiesHolder = new PropertiesHolder();
-    public static final Logger logger = Logger.getLogger(Coordinator.class);
+    public static final Logger logger = Logger.getLogger(Main.class);
     static int amountThreadsWorker = propertiesHolder.getWorkerThreadsNumber();
 
 
     public static void main(String[] args) throws IOException {
 
-//        nameFile = FileUtil.getFileToReadName();
-//        Path file = FileSystems.getDefault().getPath("C:\\Users\\Acer\\Desktop", "Text.txt");
-//        Path file = FileSystems.getDefault().getPath("src/main/resources", nameFile);
-//        FileUtil outPutFile = new FileUtil("C:\\Users\\Acer\\Desktop\\TextOut.txt");
-//        BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
-//
-//        paragraphProcessing = new ParagraphProcessing(reader.readLine());
-//        Thread myThread = new Thread(paragraphProcessing);
-//        myThread.start();
-//
-//        WriteToFile.writeToFile(outPutFile, file);
-//        int amountThreadsWorker = propertiesHolder.getWorkerThreadsNumber();
-//        static int amountThreadsWorker = 8;
-//        new Thread(new Coordinator(amountThreadsWorker)).start();
-
-
         int workerThreadsNumber = propertiesHolder.getWorkerThreadsNumber();
         int paragraphsNumberInBuffer = propertiesHolder.getParagraphsNumberInBuffer();
         oldFile = FileUtil.getFileToRead();
-        nameNewFile = FileUtil.getNewFileName();
+
         // Created reader's and writer's buffers
         ParagraphBufferReader<Paragraph> readerBuffer = new ParagraphBufferReader<>(new LinkedBlockingQueue<Paragraph>(workerThreadsNumber));
         ParagraphBuffer<Paragraph> writerBuffer = new ParagraphBuffer<>(new LinkedBlockingQueue<Paragraph>());
-//        logger.info("Created reader and writer buffers");
+        logger.info("Created reader and writer buffers");
 
         // Created ans started thread reader
         new Thread(new ParagraphReader(syncReader, oldFile, readerBuffer)).start();
-//        logger.info(" Created and started thread reader");
+        logger.info(" Created and started thread reader");
 
         // Created and started threads worker
        createAndStartedThreadsWorker(workerThreadsNumber, readerBuffer, writerBuffer, syncReader, syncWriter);

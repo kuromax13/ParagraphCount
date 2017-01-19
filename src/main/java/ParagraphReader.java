@@ -34,7 +34,7 @@ public class ParagraphReader implements Runnable {
 
 //            for (int i = 0; i < paragraphsCount; i++){
             while (scanner.hasNextLine()) {
-                if (buffer.dataQueue.size() < 2){
+                if (buffer.getDataQueue().size() < 2){
 
                     while(indicator){
 //                        entry.append(reader.readLine());
@@ -46,7 +46,7 @@ public class ParagraphReader implements Runnable {
                     }
 
                     if(entry.length() > 0){
-                        buffer.dataQueue.add(new Paragraph(paragraphsAmountToRead++, entry.toString()));
+                        buffer.getDataQueue().add(new Paragraph(paragraphsAmountToRead++, entry.toString()));
                         entry.delete(0, entry.length());
                     }
                     indicator = true;
