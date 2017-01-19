@@ -1,3 +1,5 @@
+package processing;
+
 import paragraph.Paragraph;
 import paragraph.ParagraphBufferReader;
 import org.apache.log4j.Logger;

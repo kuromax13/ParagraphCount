@@ -2,6 +2,9 @@ import org.apache.log4j.Logger;
 import paragraph.Paragraph;
 import paragraph.ParagraphBuffer;
 import paragraph.ParagraphBufferReader;
+import processing.ParagraphProcessing;
+import processing.ParagraphReader;
+import processing.ParagraphWriter;
 import util.FileUtil;
 import util.PropertiesHolder;
 
@@ -20,7 +23,6 @@ public class Main {
     ParagraphBuffer<Paragraph> bufferReader;
     static PropertiesHolder propertiesHolder = new PropertiesHolder();
     public static final Logger logger = Logger.getLogger(Main.class);
-    static int amountThreadsWorker = propertiesHolder.getWorkerThreadsNumber();
 
 
     public static void main(String[] args) throws IOException {

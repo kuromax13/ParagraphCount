@@ -1,9 +1,12 @@
+package processing;
+
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.apache.log4j.Logger;
 import paragraph.Paragraph;
 import paragraph.ParagraphBuffer;
 import paragraph.ParagraphBufferReader;
+import util.PropertiesHolder;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -29,7 +32,8 @@ public class ParagraphProcessing implements Runnable {
     Paragraph paragraph;
     ParagraphBuffer<String> workerBuffer = new ParagraphBuffer<String>(new LinkedList<String>());
     public static final Logger logger = Logger.getLogger(ParagraphProcessing.class);
-
+    static PropertiesHolder propertiesHolder = new PropertiesHolder();
+    static         int amountThreadsWorker = propertiesHolder.getWorkerThreadsNumber();
 
 
     public ParagraphProcessing(Object syncReader, Object syncWriter, ParagraphBuffer<Paragraph> bufferWriter, ParagraphBufferReader<Paragraph> bufferReader) {
@@ -145,7 +149,7 @@ public class ParagraphProcessing implements Runnable {
      */
     public synchronized void lastActionsWorkerThreads(ParagraphBuffer<Paragraph> writerBuffer){
 
-        if (Main.amountThreadsWorker == 1){
+        if (amountThreadsWorker == 1){
 
             logger.info("  Change parameter flagAndFile in the writerBuffer.");
             writerBuffer.setFlagEndFile(true);
@@ -154,7 +158,7 @@ public class ParagraphProcessing implements Runnable {
                 syncWriter.notify();
             }
         }
-        Main.amountThreadsWorker--;
+        amountThreadsWorker--;
 //        Coordinator.amountThreadsWorker--;
 
     }
