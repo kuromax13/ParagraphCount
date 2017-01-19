@@ -77,7 +77,7 @@ public class ParagraphProcessing implements Runnable {
                 workerBuffer.setWordsInParagraph(countWordsInParagraph(text));
                 workerBuffer.setParagraphHash(Hashing.sha1().hashString(text, Charsets.UTF_8).toString());
                 workerBuffer.setPunctuationSymbolsAmount(countPunctuationSymbolsInParagraph(text));
-                logger.info(" Save paragraph's data in the STSWriterBuffer");
+                logger.info(" Save paragraph's data in the reader buffer");
 
                 addParagraphIntoWriterBuffer();
 

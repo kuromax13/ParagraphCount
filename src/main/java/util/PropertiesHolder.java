@@ -15,10 +15,18 @@ public class PropertiesHolder {
     InputStream input = null;
     String fileName = "config.properties";
 
+    /**
+     * Constructor for properties holder.
+     *
+     * Loads properties when object is created
+     */
     public PropertiesHolder() {
         loadPropertiesFile();
     }
 
+    /**
+     * Loads properties file
+     */
     public void loadPropertiesFile() {
         try {
             input = getClass().getClassLoader().getResourceAsStream(fileName);
@@ -41,18 +49,22 @@ public class PropertiesHolder {
         }
     }
 
+    //returns file's to read name value as string
     public String getFileToReadName() {
         return properties.getProperty("file.name.to.read");
     }
 
+    //returns file's to write name value as string
     public String getFileToWriteName() {
         return properties.getProperty("file.name.to.write");
     }
 
+    //returns number of threads for worker
     public int getWorkerThreadsNumber() {
         return Integer.parseInt(properties.getProperty("worker.threads.number"));
     }
 
+    //returns number of paragraphs
     public int getParagraphsNumberInBuffer() {
         return Integer.parseInt(properties.getProperty("paragraphs.number.in.buffer"));
     }

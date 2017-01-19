@@ -1,10 +1,14 @@
 package processing;
 
+import org.apache.log4j.Logger;
 import paragraph.Paragraph;
 import paragraph.ParagraphBufferReader;
-import org.apache.log4j.Logger;
+import util.PropertiesHolder;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 
@@ -16,8 +20,9 @@ public class ParagraphReader implements Runnable {
     static int paragraphsAmountToRead;
     ParagraphBufferReader<Paragraph> buffer;
     final Object syncReader;
-    public static final Logger logger = Logger.getLogger(ParagraphReader.class);
-
+     static final Logger logger = Logger.getLogger(ParagraphReader.class);
+    static PropertiesHolder propertiesHolder = new PropertiesHolder();
+    volatile int paragraphsCount;
 
     public ParagraphReader(Object syncReader, Path fileToRead, ParagraphBufferReader<Paragraph> buffer) {
         this.syncReader = syncReader;
@@ -28,20 +33,22 @@ public class ParagraphReader implements Runnable {
     public void run() {
 
         try{
-//            BufferedReader reader = Files.newBufferedReader(fileToRead, StandardCharsets.UTF_8);
-            Scanner scanner = new Scanner(fileToRead);
-//            int paragraphsCount = Files.readAllLines(fileToRead, StandardCharsets.UTF_8).size();
-            boolean indicator = true;
-            StringBuilder entry = new StringBuilder();
+                        BufferedReader reader = Files.newBufferedReader(fileToRead, StandardCharsets.UTF_8);
+            paragraphsCount = Files.readAllLines(fileToRead, StandardCharsets.UTF_8).size();
 
-//            for (int i = 0; i < paragraphsCount; i++){
+            boolean indicator = true;
+            Scanner scanner = new Scanner(fileToRead);
+            StringBuilder entry = new StringBuilder();
+            String fir;
+//            for (int i = 1; i < paragraphsCount; i++){
             while (scanner.hasNextLine()) {
-                if (buffer.getDataQueue().size() < 2){
+//            while ((fir = reader.readLine()) !=null) {
+                if (buffer.getDataQueue().size() < propertiesHolder.getParagraphsNumberInBuffer()){
 
                     while(indicator){
 //                        entry.append(reader.readLine());
+//                        entry.append(fir);
                         entry.append(scanner.nextLine());
-//                        System.out.println(scanner.nextLine());
                         if (entry.indexOf("/r/n") < 0) {
                             indicator = false;
                         }
