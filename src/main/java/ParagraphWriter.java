@@ -1,10 +1,12 @@
-import Paragraph.Paragraph;
-import Paragraph.ParagraphBuffer;
 import org.apache.log4j.Logger;
+import paragraph.Paragraph;
+import paragraph.ParagraphBuffer;
+import util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -16,26 +18,27 @@ import java.util.List;
 public class ParagraphWriter implements Runnable {
     final Object syncWriter;
     ParagraphBuffer<Paragraph> buffer;
-    File newFile;
-    String newFileName;
-    static int paragraphCounter = 1;                            // counter for Paragraphs
+    Path newFile1;
+    static int paragraphCounter = 0;                            // counter for Paragraphs
     String informationForWrite = "";
     String isEmptyString = "";
     List<Paragraph> writerBuffer = new LinkedList<>();
     public static final Logger logger = Logger.getLogger(ParagraphWriter.class);
 
 
-    public ParagraphWriter(Object syncWriter, ParagraphBuffer<Paragraph> buffer, String newFileName) {
+    public ParagraphWriter(Object syncWriter, ParagraphBuffer<Paragraph> buffer) {
         this.syncWriter = syncWriter;
         this.buffer = buffer;
-        this.newFileName = newFileName;
     }
 
     public void run() {
-        logger.info("********************* Started thread STSFileWriter");
+        logger.info("Paragraph writer is started");
 
-        newFile = new File(newFileName);
-        try(FileWriter writer = new FileWriter(newFileName)){
+//        String newFileName = FileUtil.getNewFileName();
+//        newFile = new File(newFileName);
+        newFile1 = FileUtil.getFileToWrite();
+        File newFile = new File(newFile1.toAbsolutePath().toString());
+        try(FileWriter writer = new FileWriter(newFile)){
 
             while (!buffer.dataQueue.isEmpty() || !buffer.isEndOfFile()) { //check if buffer not empty
                 if (buffer.dataQueue.isEmpty()) {
@@ -56,7 +59,7 @@ public class ParagraphWriter implements Runnable {
                     }
 
                     if (!writerBuffer.isEmpty()){
-//                        for (Paragraph pr : writerBuffer){
+//                        for (paragraph pr : writerBuffer){
 //                            writer.write(pr.toString());
 //                        }
 
@@ -74,7 +77,7 @@ public class ParagraphWriter implements Runnable {
                 }
             }
             logger.info(" Wrote data about all paragraphs.");
-            writer.write(System.lineSeparator() + " File has: " + System.lineSeparator() + (paragraphCounter - 1) + " paragraphs, " + buffer.toString());
+            writer.write(System.lineSeparator() + " FileUtil has: " + System.lineSeparator() + (paragraphCounter - 1) + " paragraphs, " + buffer.toString());
 
             writer.close();
         } catch (IOException e) {
@@ -86,7 +89,7 @@ public class ParagraphWriter implements Runnable {
     /**
      * The method is taking paragraphs and their information from writerBuffer, and writing its in the string
      *
-     * @param writerBuffer  collection with Paragraph's objects
+     * @param writerBuffer  collection with paragraph's objects
      * @return              paragraphs with their information
      */
     protected String getInformationForWrite(List<Paragraph> writerBuffer){
@@ -108,8 +111,8 @@ public class ParagraphWriter implements Runnable {
     /**
      * The method is sorting objects in the writerBuffer
      *
-     * @param writerBuffer  collection Paragraph's objects
-     * @return              sorted collection Paragraph's objects
+     * @param writerBuffer  collection paragraph's objects
+     * @return              sorted collection paragraph's objects
      */
     protected List<Paragraph> sortedInformationForWrite(List<Paragraph> writerBuffer){
 

@@ -1,4 +1,4 @@
-package Paragraph;
+package paragraph;
 
 import java.util.Queue;
 

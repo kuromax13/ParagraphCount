@@ -1,4 +1,4 @@
-package Paragraph;
+package paragraph;
 
 /**
  * Created by Acer on 11.01.2017.
@@ -26,7 +26,6 @@ public class Paragraph {
     }
 
     public int compareTo(Paragraph obj) {
-
         return Integer.compare(numberParagraph, obj.getNumberParagraph());
     }
 }

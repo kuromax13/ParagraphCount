@@ -1,11 +1,8 @@
-package Paragraph;
-
+import paragraph.Paragraph;
+import paragraph.ParagraphBufferReader;
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 
@@ -37,7 +34,7 @@ public class ParagraphReader implements Runnable {
 
 //            for (int i = 0; i < paragraphsCount; i++){
             while (scanner.hasNextLine()) {
-                if (buffer.dataQueue.size() < 1){
+                if (buffer.dataQueue.size() < 2){
 
                     while(indicator){
 //                        entry.append(reader.readLine());
@@ -65,7 +62,7 @@ public class ParagraphReader implements Runnable {
                 }
             }
             buffer.setFlagEndFile(true);
-            logger.info(" Change parameter flagEndFile. File read all.");
+            logger.info(" Change parameter flagEndFile. FileUtil read all.");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
