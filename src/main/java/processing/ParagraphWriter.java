@@ -56,7 +56,7 @@ public class ParagraphWriter implements Runnable {
                     //add read paragraphs to the list
 //                    int counter = 0;
                     while (!buffer.getDataQueue().isEmpty() /*&& counter < 2*/){
-                        writerBuffer.add((Paragraph) buffer.getDataQueue().remove());
+                        writerBuffer.add( buffer.getDataQueue().remove());
 //                        counter++;
                     }
 
@@ -101,7 +101,7 @@ public class ParagraphWriter implements Runnable {
         while (paragraphIterator.hasNext()){
             Paragraph paragraph = paragraphIterator.next();
             if (paragraph.getNumberParagraph() == paragraphCounter){
-                stringBuilder.append(paragraph.getParagraph() + " " +paragraph.getNumberParagraph());
+                stringBuilder.append(paragraph.getParagraph()).append(System.lineSeparator());
                 paragraphIterator.remove();
                 paragraphCounter++;
             }else break;

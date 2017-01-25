@@ -26,7 +26,7 @@ public class Main {
 
         int workerThreadsNumber = propertiesHolder.getWorkerThreadsNumber();
         int paragraphNumberInBuffer = propertiesHolder.getParagraphsNumberInBuffer();
-        Path fileToRead = FileUtil.getFileToRead();
+        Path oldFile = FileUtil.getFileToRead();
 
         // Created reader's and writer's buffers
         ParagraphBufferReader<Paragraph> readerBuffer = new ParagraphBufferReader<>(new LinkedBlockingQueue<Paragraph>(paragraphNumberInBuffer));
@@ -34,7 +34,7 @@ public class Main {
         logger.info("Created reader and writer buffers");
 
         // Created ans started thread reader
-        new Thread(new ParagraphReader(syncReader, fileToRead, readerBuffer)).start();
+        new Thread(new ParagraphReader(syncReader, oldFile, readerBuffer)).start();
         logger.info(" Created and started thread reader");
 
         // Created and started threads worker

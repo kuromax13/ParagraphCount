@@ -8,7 +8,8 @@ import java.util.Queue;
  * Class to describe paragraph to write into file after proccessing
  */
 
-public class ParagraphBuffer<T> extends ParagraphBufferReader {
+public class ParagraphBuffer<T> extends ParagraphBufferReader<T> {
+    private int paragraphNumber;
     private String paragraphText;
     private String paragraphHash;
     private int paragraphLength;
@@ -67,4 +68,28 @@ public class ParagraphBuffer<T> extends ParagraphBufferReader {
     public void setPunctuationSymbolsAmount(int punctuationSymbolsAmount) {
         this.punctuationSymbolsAmount = punctuationSymbolsAmount;
     }
+
+    public int getParagraphNumber() {
+        return paragraphNumber;
+    }
+
+    public void setParagraphNumber(int paragraphNumber) {
+        this.paragraphNumber = paragraphNumber;
+    }
+
+    @Override
+    public String toString() {
+        return  "paragraphNumber=" + paragraphNumber +
+                ", paragraphText='" + paragraphText + '\'' +
+                ", paragraphHash='" + paragraphHash + '\'' +
+                ", paragraphLength=" + paragraphLength +
+                ", wordsInParagraph=" + wordsInParagraph +
+                ", averageWordLength=" + averageWordLength +
+                ", punctuationSymbolsAmount=" + punctuationSymbolsAmount +
+                '}';
+    }
+    public int compareTo(ParagraphBuffer obj) {
+        return Integer.compare(paragraphNumber, obj.getParagraphNumber());
+    }
+
 }

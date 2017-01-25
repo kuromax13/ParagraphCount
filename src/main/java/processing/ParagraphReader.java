@@ -33,7 +33,7 @@ public class ParagraphReader implements Runnable {
     public void run() {
 
         try{
-                        BufferedReader reader = Files.newBufferedReader(fileToRead, StandardCharsets.UTF_8);
+            BufferedReader reader = Files.newBufferedReader(fileToRead, StandardCharsets.UTF_8);
             paragraphsCount = Files.readAllLines(fileToRead, StandardCharsets.UTF_8).size();
 
             boolean indicator = true;
