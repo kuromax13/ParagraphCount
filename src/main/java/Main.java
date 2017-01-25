@@ -1,7 +1,6 @@
 import org.apache.log4j.Logger;
 import paragraph.Paragraph;
 import paragraph.ParagraphBuffer;
-import paragraph.ParagraphBufferReader;
 import processing.ParagraphProcessing;
 import processing.ParagraphReader;
 import processing.ParagraphWriter;
@@ -29,7 +28,7 @@ public class Main {
         Path oldFile = FileUtil.getFileToRead();
 
         // Created reader's and writer's buffers
-        ParagraphBufferReader<Paragraph> readerBuffer = new ParagraphBufferReader<>(new LinkedBlockingQueue<Paragraph>(paragraphNumberInBuffer));
+        ParagraphBuffer<Paragraph> readerBuffer = new ParagraphBuffer<>(new LinkedBlockingQueue<Paragraph>(paragraphNumberInBuffer));
         ParagraphBuffer<Paragraph> writerBuffer = new ParagraphBuffer<>(new LinkedBlockingQueue<Paragraph>());
         logger.info("Created reader and writer buffers");
 
@@ -49,7 +48,7 @@ public class Main {
         }
     }
 
-    public static void createAndStartedThreadsWorker(int workerThreadsNumber, ParagraphBufferReader<Paragraph> readerBuffer, ParagraphBuffer<Paragraph> writerBuffer, Object syncReader, Object syncWriter){
+    public static void createAndStartedThreadsWorker(int workerThreadsNumber, ParagraphBuffer<Paragraph> readerBuffer, ParagraphBuffer<Paragraph> writerBuffer, Object syncReader, Object syncWriter){
 
         int counter = 0;
         while (counter < workerThreadsNumber){

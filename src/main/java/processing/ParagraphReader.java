@@ -2,7 +2,7 @@ package processing;
 
 import org.apache.log4j.Logger;
 import paragraph.Paragraph;
-import paragraph.ParagraphBufferReader;
+import paragraph.ParagraphBuffer;
 import util.PropertiesHolder;
 
 import java.io.BufferedReader;
@@ -18,13 +18,13 @@ import java.util.Scanner;
 public class ParagraphReader implements Runnable {
     private Path fileToRead;
     static int paragraphsAmountToRead;
-    ParagraphBufferReader<Paragraph> buffer;
+    ParagraphBuffer<Paragraph> buffer;
     final Object syncReader;
      static final Logger logger = Logger.getLogger(ParagraphReader.class);
     static PropertiesHolder propertiesHolder = new PropertiesHolder();
     volatile int paragraphsCount;
 
-    public ParagraphReader(Object syncReader, Path fileToRead, ParagraphBufferReader<Paragraph> buffer) {
+    public ParagraphReader(Object syncReader, Path fileToRead, ParagraphBuffer<Paragraph> buffer) {
         this.syncReader = syncReader;
         this.fileToRead = fileToRead;
         this.buffer = buffer;

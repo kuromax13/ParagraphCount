@@ -1,16 +1,9 @@
 package processing;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 import org.apache.log4j.Logger;
 import paragraph.Paragraph;
 import paragraph.ParagraphBuffer;
-import paragraph.ParagraphBufferReader;
 import util.PropertiesHolder;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Acer on 01.11.2016.
@@ -24,19 +17,17 @@ import java.util.List;
  * fingerprint (hash, SHA-1)
  */
 public class ParagraphProcessing implements Runnable {
-    final String SYMBOLS_PUNCTUATION = ".,:;!?()[]{}<>/|@#$%^&*-+=_~`\"";
     final Object syncReader;
     final Object syncWriter;
-    ParagraphBufferReader<Paragraph> bufferReader;
+    ParagraphBuffer<Paragraph> bufferReader;
     ParagraphBuffer<Paragraph> bufferWriter;
     Paragraph paragraph;
-    ParagraphBuffer<String> workerBuffer = new ParagraphBuffer<String>(new LinkedList<String>());
     public static final Logger logger = Logger.getLogger(ParagraphProcessing.class);
     static PropertiesHolder propertiesHolder = new PropertiesHolder();
-    static         int amountThreadsWorker = propertiesHolder.getWorkerThreadsNumber();
+    static int amountThreadsWorker = propertiesHolder.getWorkerThreadsNumber();
 
 
-    public ParagraphProcessing(Object syncReader, Object syncWriter, ParagraphBuffer<Paragraph> bufferWriter, ParagraphBufferReader<Paragraph> bufferReader) {
+    public ParagraphProcessing(Object syncReader, Object syncWriter, ParagraphBuffer<Paragraph> bufferWriter, ParagraphBuffer<Paragraph> bufferReader) {
         this.syncReader = syncReader;
         this.syncWriter = syncWriter;
         this.bufferWriter = bufferWriter;
@@ -57,7 +48,6 @@ public class ParagraphProcessing implements Runnable {
                         e.printStackTrace();
                     }
                 }
-
             }
             else {
                 // take paragraph for work
@@ -68,23 +58,12 @@ public class ParagraphProcessing implements Runnable {
                         paragraph = bufferReader.getDataQueue().remove();
                     }
                 }
-
-                String text = paragraph.getParagraph();
-
-                workerBuffer.setParagraphText(text);
-                workerBuffer.setParagraphLength(countParagraphLength(text));
-                workerBuffer.setAverageWordLength(countAverageWordsLengthInParagraph(text));
-                workerBuffer.setWordsInParagraph(countWordsInParagraph(text));
-                workerBuffer.setParagraphHash(Hashing.sha1().hashString(text, Charsets.UTF_8).toString());
-                workerBuffer.setPunctuationSymbolsAmount(countPunctuationSymbolsInParagraph(text));
+                bufferWriter.getDataQueue().add(paragraph);
                 logger.info(" Save paragraph's data in the reader buffer");
-
-                addParagraphIntoWriterBuffer();
 
                 synchronized (syncWriter){
                     syncWriter.notify();
                 }
-                workerBuffer = cleanParametersInWorkerBuffer(workerBuffer);
             }
         }
         lastActionsWorkerThreads(bufferWriter);
@@ -92,56 +71,6 @@ public class ParagraphProcessing implements Runnable {
 
     }
 
-    public synchronized void addParagraphIntoWriterBuffer() {
-
-        bufferWriter.getDataQueue().add(paragraph);
-
-        bufferWriter.setParagraphText(workerBuffer.getParagraphText());
-        bufferWriter.setParagraphLength(workerBuffer.getParagraphLength());
-        bufferWriter.setAverageWordLength(workerBuffer.getAverageWordLength());
-        bufferWriter.setWordsInParagraph(workerBuffer.getWordsInParagraph());
-        bufferWriter.setParagraphHash(workerBuffer.getParagraphHash());
-        bufferWriter.setPunctuationSymbolsAmount(workerBuffer.getPunctuationSymbolsAmount());
-    }
-
-    public int countParagraphLength(String paragraph){
-        return paragraph.length();
-    }
-
-    public int countWordsInParagraph(String paragraph){
-        String[] wordsInParagraph = paragraph.split(" ");
-
-        return wordsInParagraph.length;
-    }
-
-    public int countPunctuationSymbolsInParagraph(String paragraph){
-        int amountSymbol = 0;
-        char[] text = paragraph.toCharArray();
-
-        for (char ch : text){
-            if (SYMBOLS_PUNCTUATION.contains(String.valueOf(ch))){
-                amountSymbol++;
-            }
-        }
-
-        return amountSymbol;
-    }
-
-    public static int countAverageWordsLengthInParagraph(String paragraph){
-        List<Integer> wordsCount = new ArrayList<Integer>();
-        String[] wordsInParagraph = paragraph.split(" ");
-        int t = 0;
-
-        for (String str : wordsInParagraph){
-            wordsCount.add(str.length());
-        }
-
-        for (int i = 0; i < wordsCount.size(); i++){
-            t += wordsCount.get(i);
-        }
-
-        return t / wordsCount.size();
-    }
     /**
      * The method is completing last action work thread
      *
@@ -159,24 +88,5 @@ public class ParagraphProcessing implements Runnable {
             }
         }
         amountThreadsWorker--;
-//        Coordinator.amountThreadsWorker--;
-
-    }
-    /**
-     * The method is mount all parameters in the start value
-     *
-     * @param workerBuffer     buffer for clean
-     * @return                 buffer after clean
-     */
-    public ParagraphBuffer<String> cleanParametersInWorkerBuffer(ParagraphBuffer<String> workerBuffer){
-
-        workerBuffer.setParagraphHash("");
-        workerBuffer.setPunctuationSymbolsAmount(0);
-        workerBuffer.setWordsInParagraph(0);
-        workerBuffer.setAverageWordLength(0);
-        workerBuffer.setParagraphText("");
-        workerBuffer.setParagraphLength(0);
-
-        return workerBuffer;
     }
 }
