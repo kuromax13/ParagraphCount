@@ -46,12 +46,9 @@ public class ParagraphProcessing implements Runnable {
             else {
                 // take paragraph for work
                 synchronized (monitorReader) {
-                    if (bufferReader.getDataQueue().isEmpty()){
-                        break;
-                    }else {
-                        paragraph = bufferReader.getDataQueue().remove();
-                    }
+                    paragraph = bufferReader.getDataQueue().remove();
                 }
+
                 bufferWriter.getDataQueue().add(paragraph);
                 logger.info(" Save paragraph's data in the reader buffer");
 

@@ -14,83 +14,76 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * Created by Acer on 11.01.2017.
+ * Created by mrybalkin on 11.01.2017.
+ *
+ * Class to get paragraphs from buffer, calculate paragraph's parameters and write into file.
  */
 public class ParagraphWriter implements Runnable {
     final String SYMBOLS_PUNCTUATION = ".,:;!?()[]{}<>/|@#$%^&*-+=_~`\"";
-
-    final Object syncWriter;
-    ParagraphBuffer<Paragraph> buffer;
-    Path newFile1;
-    static int paragraphCounter = 0;                            // counter for Paragraphs
+    final Object monitorWriter;
+    static int paragraphCounter = 0;
     String informationForWrite = "";
     String isEmptyString = "";
+    Path newFile1;
+    ParagraphBuffer<Paragraph> buffer;
     List<Paragraph> writerBuffer = new LinkedList<>();
-    public static final Logger logger = Logger.getLogger(ParagraphWriter.class);
+    private static final Logger logger = Logger.getLogger(ParagraphWriter.class);
 
-
-    public ParagraphWriter(Object syncWriter, ParagraphBuffer<Paragraph> buffer) {
-        this.syncWriter = syncWriter;
+    public ParagraphWriter(Object monitorWriter, ParagraphBuffer<Paragraph> buffer) {
+        this.monitorWriter = monitorWriter;
         this.buffer = buffer;
     }
 
     public void run() {
         logger.info("Paragraph writer is started");
 
-//        String newFileName = FileUtil.getNewFileName();
-//        newFile = new File(newFileName);
         newFile1 = FileUtil.getFileToWrite();
         File newFile = new File(newFile1.toAbsolutePath().toString());
+
         try(FileWriter writer = new FileWriter(newFile)){
 
             while (!buffer.getDataQueue().isEmpty() || !buffer.isEndOfFile()) { //check if buffer not empty
                 if (buffer.getDataQueue().isEmpty()) {
 
-                    synchronized (syncWriter) {
+                    synchronized (monitorWriter) {
                         try {
-                            syncWriter.wait();
+                            monitorWriter.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                 }else{
                     //add read paragraphs to the list
-//                    int counter = 0;
-                    while (!buffer.getDataQueue().isEmpty() /*&& counter < 2*/){
-                        writerBuffer.add( buffer.getDataQueue().remove());
-//                        counter++;
+                    while (!buffer.getDataQueue().isEmpty() ){
+                        writerBuffer.add(buffer.getDataQueue().remove());
                     }
 
                     if (!writerBuffer.isEmpty()){
-//                        for (paragraph pr : writerBuffer){
-//                            writer.write(pr.toString());
-//                        }
-
-                        writerBuffer = sortedInformationForWrite(writerBuffer);
-
+                        writerBuffer = sortParagraphs(writerBuffer);
                         informationForWrite = getInformationForWrite(writerBuffer);
-                        if (!informationForWrite.equals(isEmptyString)){
 
+                        if (!informationForWrite.equals(isEmptyString)){
                             writer.write(informationForWrite);
-                            logger.info(" Wrote paragraph and his data. Amount wrote paragraphs  = " + (paragraphCounter - 1));
                             informationForWrite = isEmptyString;
                         }
-
                     }
                 }
             }
-            logger.info(" Wrote data about all paragraphs.");
-            writer.write(System.lineSeparator() + " FileUtil has: " + System.lineSeparator() + (paragraphCounter - 1) + " paragraphs, " + buffer.toString());
 
+            logger.info("Finish writing paragraphs data.");
             writer.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info(" ********************Thread Writer ended work.");
+        logger.info("### Thread Writer ended work. ###");
 
     }
+
     /**
-     * The method is taking paragraphs and their information from writerBuffer, and writing its in the string
+     * Take paragraph from buffer, calc info, and converts to the string
+     *
+     * Java 8 may be used. See http://codereview.stackexchange.com/questions/64011/removing-elements-on-a-list-while-iterating-through-it
      *
      * @param writerBuffer  collection with paragraph's objects
      * @return              paragraphs with their information
@@ -100,7 +93,7 @@ public class ParagraphWriter implements Runnable {
         Iterator<Paragraph> paragraphIterator = writerBuffer.iterator();
         while (paragraphIterator.hasNext()){
             Paragraph paragraph = paragraphIterator.next();
-            if (paragraph.getNumberParagraph() == paragraphCounter) {
+            if (paragraph.getNumberParagraph() == paragraphCounter) { //filter out duplicated paragraphs in buffer
                 calcParagraph(paragraph);
                 stringBuilder.append(paragraph.toString()).append(System.lineSeparator());
                 paragraphIterator.remove();
@@ -111,6 +104,19 @@ public class ParagraphWriter implements Runnable {
         return stringBuilder.toString();
     }
 
+    /**
+     * Sorting paragraphs from buffer
+     */
+    protected List<Paragraph> sortParagraphs(List<Paragraph> writerBuffer){
+        Collections.sort(writerBuffer);
+        return writerBuffer;
+    }
+
+    /**
+     * Get paragraph and calculate parameters
+     *
+     * @param paragraph - to get info for calculating
+     */
     public void calcParagraph(Paragraph paragraph){
         String text = paragraph.getParagraph();
 
@@ -154,40 +160,10 @@ public class ParagraphWriter implements Runnable {
             wordsCount.add(str.length());
         }
 
-        for (int i = 0; i < wordsCount.size(); i++){
-            t += wordsCount.get(i);
+        for (Integer aWordsCount : wordsCount) {
+            t += aWordsCount;
         }
 
         return t / wordsCount.size();
-    }
-
-    /**
-     * The method is sorting objects in the writerBuffer
-     *
-     * @param writerBuffer  collection paragraph's objects
-     * @return              sorted collection paragraph's objects
-     */
-    protected List<Paragraph> sortedInformationForWrite(List<Paragraph> writerBuffer){
-
-        Paragraph[] arrayParagraphs = writerBuffer.toArray(new Paragraph[writerBuffer.size()]);
-
-        for (int i = 0; i < arrayParagraphs.length; i++){
-            Paragraph minValueCounter = arrayParagraphs[i];
-            int index = i;
-            for (int j = i+1; j < arrayParagraphs.length; j++){
-                if (minValueCounter.compareTo(arrayParagraphs[j]) > 0){
-                    minValueCounter = arrayParagraphs[j];
-                    index = j;
-                }
-            }
-            if (index != i){
-                System.arraycopy(arrayParagraphs, i, arrayParagraphs, i+1, index-i);
-                arrayParagraphs[i] = minValueCounter;
-            }
-        }
-        writerBuffer.clear();
-        Collections.addAll(writerBuffer, arrayParagraphs);
-
-        return writerBuffer;
     }
 }

@@ -5,7 +5,7 @@ package paragraph;
  *
  * Class to describe paragraph
  */
-public class Paragraph {
+public class Paragraph implements Comparable<Paragraph> {
     private final int numberParagraph;
     private String paragraph;
     private String paragraphHash;
@@ -83,6 +83,7 @@ public class Paragraph {
                 '}';
     }
 
+    @Override
     public int compareTo(Paragraph obj) {
         return Integer.compare(numberParagraph, obj.getNumberParagraph());
     }
