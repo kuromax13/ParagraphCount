@@ -128,7 +128,7 @@ public class ParagraphWriter implements Runnable {
         paragraph.setPunctuationSymbolsAmount(countPunctuationSymbolsInParagraph(text));
     }
 
-    public int countParagraphLength(String paragraph){
+    public static int countParagraphLength(String paragraph){
         return paragraph.length();
     }
 

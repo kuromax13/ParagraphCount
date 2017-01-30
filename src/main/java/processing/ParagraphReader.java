@@ -31,24 +31,17 @@ public class ParagraphReader implements Runnable {
     public void run() {
 
         try{
-            boolean indicator = true;
             Scanner scanner = new Scanner(fileToRead);
             StringBuilder entry = new StringBuilder();
 
             while (scanner.hasNextLine()) {
                 if (buffer.getDataQueue().size() < propertiesHolder.getParagraphsNumberInBuffer()){
-                    while(indicator){
-                        entry.append(scanner.nextLine());
-                        if (entry.indexOf("/r/n") < 0) {
-                            indicator = false;
-                        }
-                    }
+                    entry.append(scanner.nextLine());
 
                     if(entry.length() > 0){
                         buffer.getDataQueue().add(new Paragraph(paragraphsAmountToRead++, entry.toString()));
                         entry.delete(0, entry.length());
                     }
-                    indicator = true;
 
                     synchronized (monitorReader){
                         monitorReader.notify();
@@ -61,16 +54,15 @@ public class ParagraphReader implements Runnable {
                 }
             }
             buffer.setFlagEndFile(true);
-            logger.info(" Change parameter flagEndFile. FileUtil read all.");
+            logger.info("Set end file flat to true.");
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
-        // notify all Worker threads
         synchronized (monitorReader) {
             monitorReader.notifyAll();
         }
-        logger.info(" ********************Thread Reader ended work.");
+        logger.info("### Reader thread finished ###");
 
     }
 }

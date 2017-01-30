@@ -60,7 +60,6 @@ public class ParagraphProcessing implements Runnable {
 
         lastActionsWorkerThreads(bufferWriter);
         logger.info("### Thread Worker ended work ###");
-
     }
 
     /**
@@ -71,7 +70,6 @@ public class ParagraphProcessing implements Runnable {
     public synchronized void lastActionsWorkerThreads(ParagraphBuffer<Paragraph> writerBuffer){
 
         if (amountThreadsWorker == 1){
-
             logger.info("Change parameter endFile in the writerBuffer");
             writerBuffer.setFlagEndFile(true);
 
