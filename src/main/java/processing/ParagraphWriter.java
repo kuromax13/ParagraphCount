@@ -19,7 +19,7 @@ import java.util.*;
  * Class to get paragraphs from buffer, calculate paragraph's parameters and write into file.
  */
 public class ParagraphWriter implements Runnable {
-    final String SYMBOLS_PUNCTUATION = ".,:;!?()[]{}<>/|@#$%^&*-+=_~`\"";
+    static final String SYMBOLS_PUNCTUATION = ".,:;!?()[]{}<>/|@#$%^&*-+=_~`\"";
     final Object monitorWriter;
     static int paragraphCounter = 0;
     String informationForWrite = "";
@@ -88,7 +88,7 @@ public class ParagraphWriter implements Runnable {
      * @param writerBuffer  collection with paragraph's objects
      * @return              paragraphs with their information
      */
-    protected String getInformationForWrite(List<Paragraph> writerBuffer){
+    public static String getInformationForWrite(List<Paragraph> writerBuffer){
         StringBuilder stringBuilder = new StringBuilder();
         Iterator<Paragraph> paragraphIterator = writerBuffer.iterator();
         while (paragraphIterator.hasNext()){
@@ -117,7 +117,7 @@ public class ParagraphWriter implements Runnable {
      *
      * @param paragraph - to get info for calculating
      */
-    public void calcParagraph(Paragraph paragraph){
+    public static void calcParagraph(Paragraph paragraph){
         String text = paragraph.getParagraph();
 
         paragraph.setParagraph(text);
@@ -132,13 +132,13 @@ public class ParagraphWriter implements Runnable {
         return paragraph.length();
     }
 
-    public int countWordsInParagraph(String paragraph){
+    public static int countWordsInParagraph(String paragraph){
         String[] wordsInParagraph = paragraph.split(" ");
 
         return wordsInParagraph.length;
     }
 
-    public int countPunctuationSymbolsInParagraph(String paragraph){
+    public static int countPunctuationSymbolsInParagraph(String paragraph){
         int amountSymbol = 0;
         char[] text = paragraph.toCharArray();
 
@@ -152,7 +152,7 @@ public class ParagraphWriter implements Runnable {
     }
 
     public static int countAverageWordsLengthInParagraph(String paragraph){
-        List<Integer> wordsCount = new ArrayList<Integer>();
+        List<Integer> wordsCount = new ArrayList<>();
         String[] wordsInParagraph = paragraph.split(" ");
         int t = 0;
 
