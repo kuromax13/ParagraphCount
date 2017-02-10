@@ -1,10 +1,12 @@
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import paragraph.Paragraph;
+import paragraph.ParagraphBuffer;
 import processing.ParagraphWriter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by mrybalkin on 30.01.2017.
@@ -53,7 +55,7 @@ public class ParagraphWriter_Test {
         Paragraph paragraph = new Paragraph(0, "123 456");
         ParagraphWriter.calcParagraph(paragraph);
 
-        Assert.assertTrue(paragraph.getParagraph() == "123 456" &&
+        Assert.assertTrue(paragraph.getParagraph().equals("123 456") &&
                             paragraph.getAverageWordLength() == 3 &&
                             paragraph.getParagraphLength() == 7 &&
                             paragraph.getWordsInParagraph() == 2 &&
@@ -74,7 +76,23 @@ public class ParagraphWriter_Test {
 
     @Test
     public void testSortParagraphs(){
+        List<Paragraph> paragraphList = new ArrayList<>();
+        paragraphList.add(0, new Paragraph(1, "1"));
+        paragraphList.add(1, new Paragraph(0, "2"));
 
+        Assert.assertEquals(ParagraphWriter.sortParagraphs(paragraphList).get(0).getNumberParagraph(), 0);
+    }
+
+    @Test
+    public void testParagraphWriter(){
+        final Object syncWriter = new Object();
+        ParagraphBuffer<Paragraph> writerBuffer = new ParagraphBuffer<>(new LinkedBlockingQueue<Paragraph>());
+
+        writerBuffer.getDataQueue().add(new Paragraph(0, "1"));
+        new Thread(new ParagraphWriter(syncWriter, writerBuffer)).start();
+
+        Assert.assertTrue(!writerBuffer.getDataQueue().isEmpty());
+        Assert.assertEquals(writerBuffer.getDataQueue().size(), 1);
     }
 
 }

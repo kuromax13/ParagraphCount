@@ -107,7 +107,7 @@ public class ParagraphWriter implements Runnable {
     /**
      * Sorting paragraphs from buffer
      */
-    protected List<Paragraph> sortParagraphs(List<Paragraph> writerBuffer){
+    public static List<Paragraph> sortParagraphs(List<Paragraph> writerBuffer){
         Collections.sort(writerBuffer);
         return writerBuffer;
     }

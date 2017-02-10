@@ -52,7 +52,7 @@ public class Main {
 
     public static void startParagraphProcessing(int processingThreadsNumber, ParagraphBuffer<Paragraph> readerBuffer, ParagraphBuffer<Paragraph> writerBuffer, Object monitorReader, Object monitorWriter){
         for (int i = 0; i < processingThreadsNumber; i++){
-            new Thread(new ParagraphProcessing( monitorReader, monitorWriter,  writerBuffer, readerBuffer)).start();
+            new Thread(new ParagraphProcessing(monitorReader, monitorWriter,  writerBuffer, readerBuffer)).start();
             logger.info("### Created and started thread Worker " + i + " from " + processingThreadsNumber + " ###");
         }
     }
